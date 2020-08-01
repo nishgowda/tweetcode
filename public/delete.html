@@ -1,0 +1,30 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>TweetCode</title>
+    </head>
+    <body>
+    </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+$(document).ready(function(){
+    $(function(){
+        let url = window.location.href;
+        let sub = url.replace('http://localhost:3000/delete/', '')
+        let cid = parseInt(sub); 
+        $.ajax({
+            url : `/api/tweets/${parseInt(cid)}`,
+            type: "DELETE",
+            success: function(result){
+                console.log(result);
+                window.location.replace("/"); 
+            },
+            error: function(error){
+                alert(error.responseText);
+            }
+        });
+    })
+});
+</script>
+    </html>

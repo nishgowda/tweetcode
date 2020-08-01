@@ -6,7 +6,7 @@ $(document).ready(function(){
         success: function(result){
             let table = $("#codeTweets");
             for (let i = 0; i < result.length; i ++){
-                table.append('<tr><td>' + result[i].uid + '</td><td>' + `<a href="/showtweet/${result[i].cid}">View Tweet</a>` +  '</td><td>' +`<a href="/delete/${result[i].cid}">Delete</a>` + '</tr>');
+                table.append('<tr><td>' + result[i].username + '</td><td>' + `<a href="/showtweet/${result[i].cid}">View Tweet</a>` +  '</td><td>' +`<a href="/delete/${result[i].cid}">Delete</a>` + '</tr>');
             }
         }
     });
@@ -58,10 +58,5 @@ $(document).ready(function(){
            
         });
     })
-
-    
-
-
-
 
 });

@@ -19,7 +19,7 @@ const isLoggedIn = (req, res, next) => {
     if (req.user) {
         next();
     } else {
-        res.redirect('/login');
+        res.redirect('/');
     }
 }
 
@@ -29,7 +29,7 @@ app.use(passport.session());
 app.get('/tweets', (req, res) =>{
     res.sendFile('tweets.html', {root: "public/"});
 });
-app.get('/login', (req, res) =>{
+app.get('/', (req, res) =>{
     res.sendFile('login.html', {root: "public/"});
 });
 app.get('/failed', (req, res) => res.send('Failed to log in'))
@@ -59,11 +59,11 @@ app.get('/logout', (req, res) => {
 // <------ api ------>
 // print all the tweets
 app.get('/api/tweets',isLoggedIn,  (req, res) => {
-    conn.query('select * from code_tweet', function(error, results, fields){
+    conn.query('select code_tweet.*, (select username from user where uid = code_tweet.uid) as username from code_tweet', function(error, results, fields){
         if (error) throw error;
+        console.log(results);
         res.send(results);
     });
-
 });
 
 // get the specific tweet
