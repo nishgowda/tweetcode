@@ -1,2 +1,2 @@
 # TweetCode
-Twitter for coding!
+It's twitter but for coding!
