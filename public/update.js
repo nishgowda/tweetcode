@@ -14,7 +14,6 @@ $(document).ready(function(){
     `], { type: 'text/javascript' }));
     require(["vs/editor/editor.main"], function () {
         editor = monaco.editor.create(document.getElementById('code_editor'), {
-            theme: 'vs-dark'
         });
 
        var select = document.getElementById("language");
@@ -32,6 +31,10 @@ $(document).ready(function(){
             monaco.editor.setModelLanguage(editor.getModel(), language);
             console.log(`model language was changed to ${editor.getModel().getLanguageIdentifier().language}`);
             });
+        $('#theme').on('change', function() {
+                let theme = $("#theme").val();
+                monaco.editor.setTheme(theme);
+        });
         $.ajax({
             url : `/api/tweets/${parseInt(cid)}`,
             type: "GET",

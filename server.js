@@ -138,5 +138,5 @@ function validateUpdate(codeTweet){
     })
     return result = schema.validate(codeTweet);
 }
-
-app.listen(process.env.PORT, () => console.log(`Server hosted at http://locahost:${process.env.PORT}`));
+let port = process.env.PORT || 3000
+app.listen(port, () => console.log(`Server hosted at http://locahost:${port}`));

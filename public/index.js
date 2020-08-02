@@ -14,9 +14,9 @@ $(document).ready(function(){
 
 
     $(function(){
-        var select = document.getElementById("language");
-        var editor;
-        var langs = ['abap', 'apex', 'azcli', 'bat', 'cameligo', 'clojure', 'coffee', 'cpp', 'csharp', 'csp', 'css', 'dockerfile', 'fsharp', 'go', 'graphql', 'handlebars', 'html', 'ini', 'java', 'javascript', 'json', 'kotlin', 'less', 'lua', 'markdown', 'mips', 'msdax', 'mysql', 'objective-c', 'pascal', 'pascaligo', 'perl', 'pgsql', 'php', 'postiats', 'powerquery', 'powershell', 'pug', 'python', 'r', 'razor', 'redis', 'redshift', 'restructuredtext', 'ruby', 'rust', 'sb', 'scheme', 'scss', 'shell', 'solidity', 'sophia', 'sql', 'st', 'swift', 'tcl', 'twig', 'typescript', 'vb', 'xml', 'yaml'];
+        let select = $("#language");
+        let editor;
+        let langs = ['abap', 'apex', 'azcli', 'bat', 'cameligo', 'clojure', 'coffee', 'cpp', 'csharp', 'csp', 'css', 'dockerfile', 'fsharp', 'go', 'graphql', 'handlebars', 'html', 'ini', 'java', 'javascript', 'json', 'kotlin', 'less', 'lua', 'markdown', 'mips', 'msdax', 'mysql', 'objective-c', 'pascal', 'pascaligo', 'perl', 'pgsql', 'php', 'postiats', 'powerquery', 'powershell', 'pug', 'python', 'r', 'razor', 'redis', 'redshift', 'restructuredtext', 'ruby', 'rust', 'sb', 'scheme', 'scss', 'shell', 'solidity', 'sophia', 'sql', 'st', 'swift', 'tcl', 'twig', 'typescript', 'vb', 'xml', 'yaml'];
         for(var i = 0; i < langs.length; i++) {
             var opt = langs[i];
             var el = document.createElement("option");
@@ -40,14 +40,18 @@ $(document).ready(function(){
                     '}'
                 ].join('\n'),
                 language: 'javascript',
-                theme: 'vs-dark'
+                theme: 'vs'
             });
 
         $('#language').on('change', function() {
-            let language = $("#language").val().toLowerCase();
+            let language = $("#language").val();
             monaco.editor.setModelLanguage(editor.getModel(), language);
             console.log(`model language was changed to ${editor.getModel().getLanguageIdentifier().language}`);
             });
+        $('#theme').on('change', function() {
+                let theme = $("#theme").val();
+                monaco.editor.setTheme(theme);
+                });
         
             $("#create_form").on("submit", function(e){
             e.preventDefault();
