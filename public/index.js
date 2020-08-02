@@ -1,9 +1,9 @@
 $(document).ready(function(){
-    
     $.ajax({
         url : "/api/tweets",
         type: "GET",
         success: function(result){
+            console.log(result);
             let table = $("#codeTweets");
             for (let i = 0; i < result.length; i ++){
                 table.append('<tr><td>' + result[i].username + '</td><td>' + `<a href="/showtweet/${result[i].cid}">View Tweet</a>` +  '</td><td>' +`<a href="/delete/${result[i].cid}">Delete</a>` + '</tr>');
@@ -58,5 +58,10 @@ $(document).ready(function(){
            
         });
     })
+
+
+    
+
+
 
 });

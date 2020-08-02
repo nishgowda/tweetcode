@@ -3,6 +3,7 @@ const mysql = require('mysql');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 var conn = require('./db')
 require('dotenv').config()
+
 passport.serializeUser(function(user, done) {
     done(null, user.uid);
    });

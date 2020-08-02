@@ -32,22 +32,21 @@ app.get('/tweets', (req, res) =>{
 app.get('/', (req, res) =>{
     res.sendFile('login.html', {root: "public/"});
 });
-app.get('/failed', (req, res) => res.send('Failed to log in'))
 app.get('/create', (req, res) => {
-    res.sendFile('create.html', {root: "public/"})
+    res.sendFile('create.html', {root: "public/"});
 });
 app.get('/auth/google/', passport.authenticate('google', { scope: ['profile', 'email'] }));
-app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/failed' }),
+app.get('/auth/google/callback', passport.authenticate('google', { failureMessage: 'Failed to log in' }),
   function(req, res) {
     // Successful authentication, redirect home.
     res.redirect('/tweets');
   }
 );
-app.get('/showtweet/:cid', (req, res) => {
-    res.sendFile('showtweet.html', {root: "public/"})
-});
+app.get('/showtweet/:cid', (req, res) =>{
+    res.sendFile('showtweet.html', {root:"public/"})
+})
 app.get('/delete/:cid', (req, res) => {
-    res.sendFile('delete.html', {root: "public/"})
+    res.sendFile('delete.html', {root: "public/"});
 });
 app.get('/logout', (req, res) => {
     req.session = null;
@@ -61,7 +60,6 @@ app.get('/logout', (req, res) => {
 app.get('/api/tweets',isLoggedIn,  (req, res) => {
     conn.query('select code_tweet.*, (select username from user where uid = code_tweet.uid) as username from code_tweet', function(error, results, fields){
         if (error) throw error;
-        console.log(results);
         res.send(results);
     });
 });
@@ -112,7 +110,7 @@ app.put('/api/tweets/:cid',isLoggedIn, (req, res) =>{
         })
     })
 });
-
+// delete tweet with given id
 app.delete('/api/tweets/:cid', isLoggedIn, (req, res) =>{
     cid = parseInt(req.params.cid);
     conn.query(`delete from code_tweet where cid=${cid}`, function(error, results, fields){
