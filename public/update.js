@@ -3,11 +3,22 @@ $(document).ready(function(){
     let url = window.location.href;
     let sub = url.replace('http://localhost:3000/showtweet/', '')
     let cid = parseInt(sub);
-    var editor = ace.edit("code_editor");
-    editor.setTheme("ace/theme/monokai");
+    var editor;
+    require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@latest/min/vs' }});
+    window.MonacoEnvironment = { getWorkerUrl: () => proxy };
+    let proxy = URL.createObjectURL(new Blob([`
+        self.MonacoEnvironment = {
+            baseUrl: 'https://unpkg.com/monaco-editor@latest/min/'
+        };
+        importScripts('https://unpkg.com/monaco-editor@latest/min/vs/base/worker/workerMain.js');
+    `], { type: 'text/javascript' }));
+    require(["vs/editor/editor.main"], function () {
+        editor = monaco.editor.create(document.getElementById('code_editor'), {
+            theme: 'vs-dark'
+        });
+
        var select = document.getElementById("language");
-        var langs = ['ABAP','ABC','ActionScript', 'ADA', 'Apache_Conf','AsciiDoc','Assembly_x86','AutoHotKey',
-        'C9Search','C_Cpp','Cirru','Clojure','Cobol','coffee','ColdFusion','CSharp','CSS','Curly','D','Dart','Diff','Dockerfile','Dot','Dummy','DummySyntax','Eiffel','EJS','Elixir','Elm','Erlang','Forth','FTL','Gcode','Gherkin','Gitignore','Glsl','golang','Groovy','HAML','Handlebars','Haskell','haXe','HTML','HTML_Ruby','INI','Io','Jack','Jade','Java','JavaScript','JSON','JSONiq','JSP','JSX','Julia','LaTeX','LESS','Liquid','Lisp','LiveScript','LogiQL','LSL','Lua','LuaPage','Lucene','Makefile','Markdown','Mask','MATLAB','MEL','MUSHCode','MySQL','Nix','ObjectiveC','OCaml','Pascal','Perl','pgSQL','PHP','Powershell','Praat','Prolog','Properties','Protobuf','Python','R','RDoc','RHTML','Ruby','Rust','SASS','SCAD','Scala','Scheme','SCSS','SH','SJS','Smarty','snippets','Soy_Template','Space','SQL','Stylus','SVG','Tcl','Tex','Text','Textile','Toml','Twig','Typescript','Vala','VBScript','Velocity','Verilog','VHDL','XML','XQuery','YAML']
+        var langs = ['abap', 'apex', 'azcli', 'bat', 'cameligo', 'clojure', 'coffee', 'cpp', 'csharp', 'csp', 'css', 'dockerfile', 'fsharp', 'go', 'graphql', 'handlebars', 'html', 'ini', 'java', 'javascript', 'json', 'kotlin', 'less', 'lua', 'markdown', 'mips', 'msdax', 'mysql', 'objective-c', 'pascal', 'pascaligo', 'perl', 'pgsql', 'php', 'postiats', 'powerquery', 'powershell', 'pug', 'python', 'r', 'razor', 'redis', 'redshift', 'restructuredtext', 'ruby', 'rust', 'sb', 'scheme', 'scss', 'shell', 'solidity', 'sophia', 'sql', 'st', 'swift', 'tcl', 'twig', 'typescript', 'vb', 'xml', 'yaml'];
         for(var i = 0; i < langs.length; i++) {
             var opt = langs[i];
             var el = document.createElement("option");
@@ -15,25 +26,24 @@ $(document).ready(function(){
             el.value = opt;
             select.appendChild(el);
         }
-        $('#language').on('change', function() {
-            let language = $("#language").val().toLowerCase();
-            editor.getSession().setMode(`ace/mode/${language}`);
 
+        $('#language').on('change', function() {
+            let language = $("#language").val();
+            monaco.editor.setModelLanguage(editor.getModel(), language);
+            console.log(`model language was changed to ${editor.getModel().getLanguageIdentifier().language}`);
             });
-            document.getElementById("code_editor").style.height = "700px";
-            document.getElementById("code_editor").style.width = "1000px";
-    $.ajax({
-        url : `/api/tweets/${parseInt(cid)}`,
-        type: "GET",
-        success: function(result){
-            let code = result[0].code;
-            language = result[0].language;
-            editor.setValue(code);
-            text = editor.getValue()
-            $('#language').val(language);
-            editor.getSession().setMode(`ace/mode/${language.toLowerCase()}`);
-        }
-    });
+        $.ajax({
+            url : `/api/tweets/${parseInt(cid)}`,
+            type: "GET",
+            success: function(result){
+                let code = result[0].code;
+                language = result[0].language;
+                monaco.editor.setModelLanguage(editor.getModel(), language);
+                console.log(`model language was changed to ${editor.getModel().getLanguageIdentifier().language}`);
+                editor.getModel().setValue(code);
+                $('#language').val(language);
+            }
+        });
     $(function (){
         let url = window.location.href;
         let sub = url.replace('http://localhost:3000/showtweet/', '')
@@ -41,7 +51,7 @@ $(document).ready(function(){
         $("#create_form").on("submit", function(e){
                 e.preventDefault();
                 var formData = {
-                    'code': editor.getValue().replace(/"/g, "'"),
+                    'code': editor.getModel().getValue().replace(/"/g, "'"),
                     'cid' : parseInt(cid),
                     'language': $('#language').val()
                 };
@@ -63,5 +73,5 @@ $(document).ready(function(){
                 });
             });
         })
-    
+    });
     });

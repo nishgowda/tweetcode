@@ -4,7 +4,14 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+<style>
+ #code_editor {
+	width: 1000px;
+	height: 700px;
 
+}
+
+</style>
   <title>TweetCode</title>
     </head>
     <body>
@@ -16,7 +23,7 @@
     <form id="create_form" method="PUT" class="form-group" name="create_form" action="/">
         <label for="language" >Language:</label>
         <select id="language" name="language" class="form-control">
-        <option value="JavaScript">Choose a Language</option>
+        <option value="">Choose a Language</option>
     </select>
     </div>
   <div class="form-group">
@@ -34,7 +41,7 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="https://microsoft.github.io/monaco-editor/node_modules/monaco-editor/min/vs/loader.js"></script>
 <script type="text/javascript" src="/update.js"></script>
     </body>
 
