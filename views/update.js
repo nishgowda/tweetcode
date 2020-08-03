@@ -1,3 +1,12 @@
+/*
+    @file: update.js
+    @author: Nish Gowda
+    @data: 08/03/20
+    @about: File that handles our showtweet.html file.
+    Updates values whenever a user decides to edit an existing tweet
+    and pulls the saved contents from db on load. Makes PUT and GET requests
+    to our API.
+*/
 $(document).ready(function(){
 
     let url = window.location.href;
@@ -42,9 +51,9 @@ $(document).ready(function(){
             url : `/api/tweets/${cid}`,
             type: "GET",
             success: function(result){
-                let code = result[0].code;
-                language = result[0].language;
-                let title = result[0].title;
+                let code = result[0].code.replace(/'/g, "");
+                language = result[0].language.replace(/'/g, "");
+                let title = result[0].title.replace(/'/g, "");
                 console.log(title);
                 $("#language").val(language);
                 $('#language').formSelect();
@@ -71,7 +80,7 @@ $(document).ready(function(){
                 e.preventDefault();
                 // create our object that will store our information for PUT reuest
                 var formData = {
-                    'code': editor.getModel().getValue().replace(/"/g, "'"),
+                    'code': editor.getModel().getValue().replace(/'/g, '"'),
                     'cid' : parseInt(cid),
                     'language': $('#language').val(),
                     'title': $("#title").val()

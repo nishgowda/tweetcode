@@ -1,7 +1,7 @@
 /*
     @file: index.js
     @author: Nish Gowda
-    @data: 08/23/20
+    @data: 08/03/20
     @about: File that handles our Index and Create pages
     Sends requests to our REST API via ajax to GET JSON data
     and set POST data.
@@ -16,9 +16,9 @@ $(document).ready(function(){
             for (let i = 0; i < result.length; i ++){
                 if (result[i].uid == result[0].currentUid){
 
-                    table.append('<tr><td>' + result[i].username + `<img class="avatar" src="${result[i].imageUrl}"`+'</td><td>' +result[i].title+ '</td><td>' +  `<a href="/showtweet/${result[i].cid}">View Tweet</a>` +  '</td><td>' +`<a href="/delete/${result[i].cid}">Delete</a>` + '</tr>');
+                    table.append('<tr><td>' + result[i].username.replace(/'/g, "") + `<img class="avatar" src="${result[i].imageUrl}"`+'</td><td>' +result[i].title.replace(/'/g, "")+ '</td><td>' +  `<a href="/showtweet/${result[i].cid}">View Tweet</a>` +  '</td><td>' +`<a href="/delete/${result[i].cid}">Delete</a>` + '</tr>');
                 }else{
-                    table.append('<tr><td>' + result[i].username + `<img class="avatar" src="${result[i].imageUrl}"` + '</td><td>' +result[i].title+ '</td><td>' + `<a  href="/showtweet/${result[i].cid}">View Tweet</a>` +  '</td><td>' +`<a class="isDisabled" href="/delete/${result[i].cid}">Delete</a>` + '</tr>');
+                    table.append('<tr><td>' + result[i].username.replace(/'/g, "") + `<img class="avatar" src="${result[i].imageUrl}"` + '</td><td>' +result[i].title.replace(/'/g, "")+ '</td><td>' + `<a  href="/showtweet/${result[i].cid}">View Tweet</a>` +  '</td><td>' +`<a class="isDisabled" href="/delete/${result[i].cid}">Delete</a>` + '</tr>');
                 }
             }
             let navbar = $("#navitem");
@@ -78,7 +78,7 @@ $(document).ready(function(){
             // Object that will be passed in via POST to our API 
             // Grab the data from the code editor and language from selections
             var formData = {
-                'code': editor.getModel().getValue().replace(/"/g, "'"),
+                'code': editor.getModel().getValue().replace(/'/g, ''),
                 'language': $('#language').val(),
                  'title': $('#title').val()
             };

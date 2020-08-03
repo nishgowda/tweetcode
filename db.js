@@ -1,3 +1,10 @@
+/*
+    @file: db.js
+    @author: Nish Gowda
+    @data: 08/03/20
+    @about: db file that connects to MySQL and creates a connection.
+    Exports the connection so that our API and middleware can connect to it.
+*/
 const mysql = require('mysql');
 require('dotenv').config()
 const conn = mysql.createConnection({
