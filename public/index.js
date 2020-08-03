@@ -1,24 +1,34 @@
+/*
+    @file: index.js
+    @author: Nish Gowda
+    @data: 08/23/20
+    @about: File that handles our Index and Create pages
+    Sends requests to our REST API via ajax to GET JSON data
+    and set POST data.
+*/
 $(document).ready(function(){
-
+    // Get request to our api, retrieve all the codetweets in the database
     $.ajax({
         url : "/api/tweets",
         type: "GET",
         success: function(result){
-            console.log(result);
             let table = $("#codeTweets");
             for (let i = 0; i < result.length; i ++){
-                console.log(result[0].currentUid)
                 if (result[i].uid == result[0].currentUid){
 
-                    table.append('<tr><td>' + result[i].username + '</td><td>' + `<a href="/showtweet/${result[i].cid}">View Tweet</a>` +  '</td><td>' +`<a href="/delete/${result[i].cid}">Delete</a>` + '</tr>');
+                    table.append('<tr><td>' + result[i].username + `<img class="avatar" src="${result[i].imageUrl}"`+'</td><td>' +result[i].title+ '</td><td>' +  `<a href="/showtweet/${result[i].cid}">View Tweet</a>` +  '</td><td>' +`<a href="/delete/${result[i].cid}">Delete</a>` + '</tr>');
                 }else{
-                    table.append('<tr><td>' + result[i].username + '</td><td>' + `<a  href="/showtweet/${result[i].cid}">View Tweet</a>` +  '</td><td>' +`<a class="isDisabled" href="/delete/${result[i].cid}">Delete</a>` + '</tr>');
+                    table.append('<tr><td>' + result[i].username + `<img class="avatar" src="${result[i].imageUrl}"` + '</td><td>' +result[i].title+ '</td><td>' + `<a  href="/showtweet/${result[i].cid}">View Tweet</a>` +  '</td><td>' +`<a class="isDisabled" href="/delete/${result[i].cid}">Delete</a>` + '</tr>');
                 }
             }
             let navbar = $("#navitem");
-            navbar.append('<li><a>' + result[0].currentUser + '</a></li>');
+            navbar.append('<li><a>' + `<img class="userAvatar" src="${result[0].currentUserImg}"` + '</a></li>');
+        },
+        error: function(error){
+            window.location.href = error.responseText;
         }
     });
+    // Selector for the language options
     let select = $("#language");
     let editor;
     let langs = ['abap', 'apex', 'azcli', 'bat', 'cameligo', 'clojure', 'coffee', 'cpp', 'csharp', 'csp', 'css', 'dockerfile', 'fsharp', 'go', 'graphql', 'handlebars', 'html', 'ini', 'java', 'javascript', 'json', 'kotlin', 'less', 'lua', 'markdown', 'mips', 'msdax', 'mysql', 'objective-c', 'pascal', 'pascaligo', 'perl', 'pgsql', 'php', 'postiats', 'powerquery', 'powershell', 'pug', 'python', 'r', 'razor', 'redis', 'redshift', 'restructuredtext', 'ruby', 'rust', 'sb', 'scheme', 'scss', 'shell', 'solidity', 'sophia', 'sql', 'st', 'swift', 'tcl', 'twig', 'typescript', 'vb', 'xml', 'yaml'];
@@ -31,6 +41,7 @@ $(document).ready(function(){
     }
 
     $(function(){
+        // Setup to display the Monaco Editor
         require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@latest/min/vs' }});
         window.MonacoEnvironment = { getWorkerUrl: () => proxy };
         let proxy = URL.createObjectURL(new Blob([`
@@ -50,11 +61,13 @@ $(document).ready(function(){
                 theme: 'vs'
             });
 
+        // Update langauge value when user selects from options
         $('#language').on('change', function() {
             language = $("#language").val();
             monaco.editor.setModelLanguage(editor.getModel(), language);
             console.log(`model language was changed to ${editor.getModel().getLanguageIdentifier().language}`);
             });
+        // Update theme when user selects from options
         $('#theme').on('change', function() {
                 let theme = $("#theme").val();
                 monaco.editor.setTheme(theme);
@@ -62,12 +75,13 @@ $(document).ready(function(){
         
             $("#create_form").on("submit", function(e){
             e.preventDefault();
-
+            // Object that will be passed in via POST to our API 
+            // Grab the data from the code editor and language from selections
             var formData = {
                 'code': editor.getModel().getValue().replace(/"/g, "'"),
-                'language': $('#language').val().toLowerCase()
+                'language': $('#language').val(),
+                 'title': $('#title').val()
             };
-            console.log(JSON.stringify(formData));
             $.ajax({
                 url: "/api/create",
                 type: "POST",
@@ -78,8 +92,12 @@ $(document).ready(function(){
                     window.location.replace("/tweets"); 
                 },
                 error: function(error){
-                    console.log(error);
-                    alert(error.responseText);
+                    if (error.responseText == "Unauthorized"){
+                        window.location.href = error.responseText;
+                    }else{
+                        alert(error.responseText);
+                    }
+
                 }
             });
            

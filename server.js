@@ -1,66 +1,30 @@
 const express = require('express');
 const Joi = require('joi');
 const app = express();
-const passport = require('passport');
-const cookieSession = require('cookie-session')
+
 app.use(express.json());
 app.use(express.static('public'));
 require('./google-passport.js');
 var conn = require('./db')
 
-
-app.use(cookieSession({
-    name: 'tweetcode-session',
-    keys: ['key1', 'key2']
-  }))
-
-// Auth middleware that checks if the user is logged in
+require('./routes')(app);
 const isLoggedIn = (req, res, next) => {
     if (req.user) {
         next();
     } else {
-        res.redirect('/');
+        res.status(400).send("Unauthorized");
     }
 }
 
-app.use(passport.initialize());
-app.use(passport.session());
-
-app.get('/tweets', (req, res) =>{
-    res.sendFile('tweets.html', {root: "public/"});
-});
-app.get('/', (req, res) =>{
-    res.sendFile('login.html', {root: "public/"});
-});
-app.get('/create', (req, res) => {
-    res.sendFile('create.html', {root: "public/"});
-});
-app.get('/auth/google/', passport.authenticate('google', { scope: ['profile', 'email'] }));
-app.get('/auth/google/callback', passport.authenticate('google', { failureMessage: 'Failed to log in' }),
-  function(req, res) {
-    // Successful authentication, redirect home.
-    res.redirect('/tweets');
-  }
-);
-app.get('/showtweet/:cid', (req, res) =>{
-    res.sendFile('showtweet.html', {root:"public/"})
-})
-app.get('/delete/:cid', (req, res) => {
-    res.sendFile('delete.html', {root: "public/"});
-});
-app.get('/logout', (req, res) => {
-    req.session = null;
-    req.logout();
-    res.redirect('/');
-})
+// Auth middleware that checks if the user is logged in
 
 
 // <------ api ------>
 // print all the tweets
-app.get('/api/tweets',isLoggedIn,  (req, res) => {
-    conn.query('select code_tweet.*, (select username from user where uid = code_tweet.uid) as username from code_tweet', function(error, results, fields){
+app.get('/api/tweets', isLoggedIn, (req, res) => {
+    conn.query('select code_tweet.*, user.username, user.imageUrl from user inner join code_tweet on (code_tweet.uid = user.uid)', function(error, results, fields){
         if (error) throw error;
-        results[0].currentUser = req.user[0].username;
+        results[0].currentUserImg = req.user[0].imageUrl;
         results[0].currentUid = req.user[0].uid;
         res.send(results);
     });
@@ -87,20 +51,20 @@ app.post('/api/create', isLoggedIn, (req, res) => {
         res.status(404).send(error.details[0].message);
         return;
     }
-    conn.query(`insert into code_tweet(code, uid, language) values("${req.body.code}", ${req.user[0].uid}, "${req.body.language}")`,function(error, results, fields){
+    conn.query(`insert into code_tweet(code, uid, language, title) values("${req.body.code}", ${req.user[0].uid}, "${req.body.language}", "${req.body.title}")`,function(error, results, fields){
         if (error) throw error;
         res.send(results);
     });
 });
 // update a specific tweet
-app.put('/api/tweets/:cid',isLoggedIn, (req, res) =>{
+app.put('/api/tweets/:cid',isLoggedIn,  (req, res) =>{
     const { error } = validateUpdate(req.body);
     if (error){
         res.status(404).send(error.details[0].message);
         return;
     }
     cid = parseInt(req.params.cid);
-    conn.query(`update code_tweet set code="${req.body.code}", language="${req.body.language}" where cid=${cid}`, function(error, results, fields){
+    conn.query(`update code_tweet set code="${req.body.code}", language="${req.body.language}", title="${req.body.title}" where cid=${cid}`, function(error, results, fields){
         if (error) throw error;
         if(results.affectedRows == 0) {
             res.status(400).send("Invalid id");
@@ -128,7 +92,8 @@ app.delete('/api/tweets/:cid', isLoggedIn, (req, res) =>{
 function validatePost(codeTweet){
     const schema = Joi.object({
         code: Joi.string().min(3).required(),
-        language: Joi.string().min(1).required()
+        language: Joi.string().min(1).required(),
+        title: Joi.string().min(3).required()
     })
     return result = schema.validate(codeTweet);
 }
@@ -136,7 +101,8 @@ function validateUpdate(codeTweet){
     const schema = Joi.object({
         cid: Joi.number().min(1).required(),
         code: Joi.string().min(3).required(),
-        language: Joi.string().min(1).required()
+        language: Joi.string().min(1).required(),
+        title: Joi.string().min(3).required()
     })
     return result = schema.validate(codeTweet);
 }
