@@ -9,8 +9,8 @@
 	width: 900px;
 	height: 700px;
 }
-#body{
-  background-color: #f6f6f6;
+body{
+  background-color: #f9f9f9;
 }
 </style>
   <title>TweetCode</title>
@@ -18,41 +18,42 @@
     <body>
     <div class="container">
     <h3>Create a TweetCode</h3>
-    <div class="form-group">
-    <div class="row">
-    <div class="col">
-    <form id="create_form" method="POST" class="form-group" name="create_form" action="/">
-        <label for="language" >Language:</label>
-        <select id="language" name="language" class="form-control">
-        <option value="JavaScript">JavaScript</option>
+    <form id="create_form" method="POST" name="create_form" action="/">
+        <div class="row">
+        <div class="input-field col s12 m6">
+        <select id="language" name="language">
+        <option value="javascript">javascript</option>
     </select>
-    </div>
-     <div class="col">
-    <label for="theme">Theme:</label>
-    <select id="theme" name="theme" class="form-control">
+              <label for="language" >Language:</label>
+</div>
+ <div class="input-field col s12 m6">
+
+    <select id="theme" name="theme">
         <option value="vs">Visual Studio</option>
         <option value="vs-dark">Visual Studio Dark</option>
         <option value="hc-black">High Contrast Black</option>
-       
     </select>
-    </div>
-    </div>
-
+                <label for="theme">Theme:</label>
+       </div>
+       </div>
      <div id="code_editor"></div>
-
-
         <button type="submit" id="submit" class="btn btn-primary">Save</button>
     </form>
     </div>
     </body>
-<!-- CSS only -->
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-<!-- JS, Popper.js, and jQuery -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+
+
+
 <script type="text/javascript" src="index.js"></script>
 <script src="https://unpkg.com/monaco-editor@latest/min/vs/loader.js"></script>
+<script>
+     $(document).ready(function(){
+    $('#language').formSelect();
+    $('#theme').formSelect();
+  });
+</script>
     </html>

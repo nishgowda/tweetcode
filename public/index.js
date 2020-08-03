@@ -7,23 +7,30 @@ $(document).ready(function(){
             console.log(result);
             let table = $("#codeTweets");
             for (let i = 0; i < result.length; i ++){
-                table.append('<tr><td>' + result[i].username + '</td><td>' + `<a href="/showtweet/${result[i].cid}">View Tweet</a>` +  '</td><td>' +`<a href="/delete/${result[i].cid}">Delete</a>` + '</tr>');
+                console.log(result[0].currentUid)
+                if (result[i].uid == result[0].currentUid){
+
+                    table.append('<tr><td>' + result[i].username + '</td><td>' + `<a href="/showtweet/${result[i].cid}">View Tweet</a>` +  '</td><td>' +`<a href="/delete/${result[i].cid}">Delete</a>` + '</tr>');
+                }else{
+                    table.append('<tr><td>' + result[i].username + '</td><td>' + `<a  href="/showtweet/${result[i].cid}">View Tweet</a>` +  '</td><td>' +`<a class="isDisabled" href="/delete/${result[i].cid}">Delete</a>` + '</tr>');
+                }
             }
+            let navbar = $("#navitem");
+            navbar.append('<li><a>' + result[0].currentUser + '</a></li>');
         }
     });
-
+    let select = $("#language");
+    let editor;
+    let langs = ['abap', 'apex', 'azcli', 'bat', 'cameligo', 'clojure', 'coffee', 'cpp', 'csharp', 'csp', 'css', 'dockerfile', 'fsharp', 'go', 'graphql', 'handlebars', 'html', 'ini', 'java', 'javascript', 'json', 'kotlin', 'less', 'lua', 'markdown', 'mips', 'msdax', 'mysql', 'objective-c', 'pascal', 'pascaligo', 'perl', 'pgsql', 'php', 'postiats', 'powerquery', 'powershell', 'pug', 'python', 'r', 'razor', 'redis', 'redshift', 'restructuredtext', 'ruby', 'rust', 'sb', 'scheme', 'scss', 'shell', 'solidity', 'sophia', 'sql', 'st', 'swift', 'tcl', 'twig', 'typescript', 'vb', 'xml', 'yaml'];
+    for(var i = 0; i < langs.length; i++) {
+        var opt = langs[i];
+        var el = document.createElement("option");
+        el.textContent = opt;
+        el.value = opt;
+        select.append(el);
+    }
 
     $(function(){
-        let select = $("#language");
-        let editor;
-        let langs = ['abap', 'apex', 'azcli', 'bat', 'cameligo', 'clojure', 'coffee', 'cpp', 'csharp', 'csp', 'css', 'dockerfile', 'fsharp', 'go', 'graphql', 'handlebars', 'html', 'ini', 'java', 'javascript', 'json', 'kotlin', 'less', 'lua', 'markdown', 'mips', 'msdax', 'mysql', 'objective-c', 'pascal', 'pascaligo', 'perl', 'pgsql', 'php', 'postiats', 'powerquery', 'powershell', 'pug', 'python', 'r', 'razor', 'redis', 'redshift', 'restructuredtext', 'ruby', 'rust', 'sb', 'scheme', 'scss', 'shell', 'solidity', 'sophia', 'sql', 'st', 'swift', 'tcl', 'twig', 'typescript', 'vb', 'xml', 'yaml'];
-        for(var i = 0; i < langs.length; i++) {
-            var opt = langs[i];
-            var el = document.createElement("option");
-            el.textContent = opt;
-            el.value = opt;
-            select.append(el);
-        }
         require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@latest/min/vs' }});
         window.MonacoEnvironment = { getWorkerUrl: () => proxy };
         let proxy = URL.createObjectURL(new Blob([`
@@ -44,7 +51,7 @@ $(document).ready(function(){
             });
 
         $('#language').on('change', function() {
-            let language = $("#language").val();
+            language = $("#language").val();
             monaco.editor.setModelLanguage(editor.getModel(), language);
             console.log(`model language was changed to ${editor.getModel().getLanguageIdentifier().language}`);
             });

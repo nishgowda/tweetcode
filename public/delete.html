@@ -18,7 +18,7 @@ $(document).ready(function(){
             type: "DELETE",
             success: function(result){
                 console.log(result);
-                window.location.replace("/"); 
+                window.location.replace("/tweets"); 
             },
             error: function(error){
                 alert(error.responseText);

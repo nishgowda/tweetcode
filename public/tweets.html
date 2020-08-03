@@ -5,22 +5,63 @@
   <meta charset="utf-8">
 <style>
 body{
-  background-color: #f6f6f6;
+  background-color: #f9f9f9;
+}
+.logo {
+    display: inline-block;
+    height: 100%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.isDisabled {
+  color: currentColor;
+  cursor: not-allowed;
+  opacity: 0.5;
+  text-decoration: none;
+  pointer-events: none;
 }
 </style>
   <title>TweetCode</title>
   </head>
 
   <body>
+  <div class="navbar-fixed">
+  <div class="row">
+    <nav style="background-color: #03D095">
+      <div class="nav-wrapper bg-dark">
+        <div class="col s12">
+          <a id="logo" href="/tweets" href="" class="brand-logo">TweetCode</a>
+          <a href="#" data-target="mobile-demo" class="sidenav-trigger">
+            <i class="material-icons">menu</i>
+          </a>
+          <ul id="navitem" class="right hide-on-med-and-down">
+            <li>
+              <a href="/logout">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </div>
+</div>
 <div class="container">
 
             <div>
-                    <h1>TweetCode</h1>
-    <a id="newCodeTweet" role="button" class="btn btn-primary" href="/create">New TweetCode</a>
+                  
+                    <center>
+                      <h3>Public TweetCodes</h3>
+   <a id="newCodeTweet"  href="/create" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
+   </center>
     </div>
 
+    <div id="divWrapper">
+<input type="search" id="filter" class="global-search" onkeyup="filter()" placeholder="Search">
+</div>
+
+
     <div>
-    <table id="codeTweets"class="table table-bordered table-hover">
+    <table id="codeTweets"class="highlight">
     <tr> 
     <td>Owner</td>
     <td>Edit</td>
@@ -32,15 +73,38 @@ body{
     </div>
 
   </body>
-<!-- CSS only -->
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-<!-- JS, Popper.js, and jQuery -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+
+
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://microsoft.github.io/monaco-editor/node_modules/monaco-editor/min/vs/loader.js"></script>
 <script type="text/javascript" src="index.js"></script>
+<script>
+function filter() {
+  // Declare variables 
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("filter");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("codeTweets");
+  tr = table.getElementsByTagName("tr");
+
+  // Loop through all table rows, and hide those who don't match the search query
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    } 
+  }
+}
+</script>
   </html>

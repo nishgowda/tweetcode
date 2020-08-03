@@ -60,6 +60,8 @@ app.get('/logout', (req, res) => {
 app.get('/api/tweets',isLoggedIn,  (req, res) => {
     conn.query('select code_tweet.*, (select username from user where uid = code_tweet.uid) as username from code_tweet', function(error, results, fields){
         if (error) throw error;
+        results[0].currentUser = req.user[0].username;
+        results[0].currentUid = req.user[0].uid;
         res.send(results);
     });
 });
