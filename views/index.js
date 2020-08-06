@@ -7,7 +7,9 @@
     and set POST data.
 */
 $(document).ready(function(){
+
     // Get request to our api, retrieve all the codetweets in the database
+    let uid, label;
     $.ajax({
         url : "/api/tweets",
         type: "GET",
@@ -15,13 +17,14 @@ $(document).ready(function(){
             let table = $("#codeTweets");
             for (let i = 0; i < result.length; i ++){
                 if (result[i].uid == result[0].currentUid){
-
-                    table.append('<tr><td>' + result[i].username.replace(/'/g, "") + `<img class="avatar" src="${result[i].imageUrl}"`+'</td><td>' +result[i].title.replace(/'/g, "")+ '</td><td>' +  `<a href="/showtweet/${result[i].cid}">View Tweet</a>` +  '</td><td>' +`<a href="/delete/${result[i].cid}">Delete</a>` + '</tr>');
+                    table.append('<tr><td>' + result[i].username.replace(/'/g, "") + `<img class="avatar" src="${result[i].imageUrl}"`+'</td><td>' +result[i].title.replace(/'/g, "") + '</td><td>' + result[i].date +'</td><td>'+ `<a href="/showtweet/${result[i].cid}">View Tweet</a>` +  '</td><td>' +`<a href="/delete/${result[i].cid}">Delete</a>` + '</tr>');
                 }else{
-                    table.append('<tr><td>' + result[i].username.replace(/'/g, "") + `<img class="avatar" src="${result[i].imageUrl}"` + '</td><td>' +result[i].title.replace(/'/g, "")+ '</td><td>' + `<a  href="/showtweet/${result[i].cid}">View Tweet</a>` +  '</td><td>' +`<a class="isDisabled" href="/delete/${result[i].cid}">Delete</a>` + '</tr>');
+                    table.append('<tr><td>' + result[i].username.replace(/'/g, "") + `<img class="avatar" src="${result[i].imageUrl}"` + '</td><td>' +result[i].title.replace(/'/g, "")+ '</td><td>' + result[i].date +'</td><td>'+ `<a  href="/showtweet/${result[i].cid}">View Tweet</a>` +  '</td><td>' +`<a class="isDisabled" href="/delete/${result[i].cid}">Delete</a>` + '</tr>');
                 }
             }
             let navbar = $("#navitem");
+            uid = result[0].currentUid;
+            label = result[0].currentUser;
             navbar.append('<li><a>' + `<img class="userAvatar" src="${result[0].currentUserImg}"` + '</a></li>');
         },
         error: function(error){
@@ -39,8 +42,9 @@ $(document).ready(function(){
         el.value = opt;
         select.append(el);
     }
-
+   
     $(function(){
+
         // Setup to display the Monaco Editor
         require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@latest/min/vs' }});
         window.MonacoEnvironment = { getWorkerUrl: () => proxy };
@@ -50,6 +54,7 @@ $(document).ready(function(){
             };
             importScripts('https://unpkg.com/monaco-editor@latest/min/vs/base/worker/workerMain.js');
         `], { type: 'text/javascript' }));
+
         require(["vs/editor/editor.main"], function () {
             editor = monaco.editor.create(document.getElementById('code_editor'), {
                 value: [
@@ -60,7 +65,7 @@ $(document).ready(function(){
                 language: 'javascript',
                 theme: 'vs'
             });
-
+    
         // Update langauge value when user selects from options
         $('#language').on('change', function() {
             language = $("#language").val();

@@ -7,6 +7,7 @@
     and pulls the saved contents from db on load. Makes PUT and GET requests
     to our API.
 */
+
 $(document).ready(function(){
 
     let url = window.location.href;
@@ -23,7 +24,8 @@ $(document).ready(function(){
         el.textContent = opt;
         el.value = opt;
         select.append(el);
-    }
+    } 
+   
     // setup Monaco Editor 
     require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@latest/min/vs' }});
     window.MonacoEnvironment = { getWorkerUrl: () => proxy };
@@ -33,18 +35,52 @@ $(document).ready(function(){
         };
         importScripts('https://unpkg.com/monaco-editor@latest/min/vs/base/worker/workerMain.js');
     `], { type: 'text/javascript' }));
+        let USER = {
+        label: '',
+        color: "#" + Math.floor(Math.random()*16777215).toString(16)
+    };
     require(["vs/editor/editor.main"], function () {
+       monaco.editor.defineTheme('my-vs', {
+            base: 'vs',
+            inherit: true,
+            rules: [],
+            colors: {
+                'editorCursor.foreground': USER.color,
+            }
+        });
+        
+        
+        monaco.editor.defineTheme('my-vs-dark', {
+            base: 'vs-dark',
+            inherit: true,
+            rules: [],
+            colors: {
+                'editorCursor.foreground': USER.color,
+            }
+        });
+     
+        
+        monaco.editor.defineTheme('my-hc-black', {
+            base: 'hc-black',
+            inherit: true,
+            rules: [],
+            colors: {
+                'editorCursor.foreground': USER.color,
+            }
+        });
         editor = monaco.editor.create(document.getElementById('code_editor'));
+      
+        monaco.editor.setTheme('my-vs')
 
+    
     // Update  and set monaco editor language on change
         $('#language').on('change', function() {
             let language = document.getElementById('language').value;
             monaco.editor.setModelLanguage(editor.getModel(), language);
-            console.log(`model language was changed to ${editor.getModel().getLanguageIdentifier().language}`);
             });
         $('#theme').on('change', function() {
                 let theme = $("#theme").val();
-                monaco.editor.setTheme(theme);
+                monaco.editor.setTheme(theme) 
         });
         // Send request to api to get data on specific code tweet. Update the editor to display saved data
         $.ajax({
@@ -54,6 +90,7 @@ $(document).ready(function(){
                 let code = result[0].code.replace(/'/g, "");
                 language = result[0].language.replace(/'/g, "");
                 let title = result[0].title.replace(/'/g, "");
+                USER.label = result[0].username;
                 console.log(title);
                 $("#language").val(language);
                 $('#language').formSelect();
@@ -62,6 +99,7 @@ $(document).ready(function(){
                 monaco.editor.setModelLanguage(editor.getModel(), language);
                 console.log(`model language was changed to ${editor.getModel().getLanguageIdentifier().language}`);
                 editor.getModel().setValue(code);
+      
             },
             error: function(error){
                 if (error.responseText == 'Unauthorized'){
@@ -71,8 +109,20 @@ $(document).ready(function(){
                 }
             }
         });
+        $(function(){
+            var socket = io('http://localhost:3000');
+            socket.emit('join', location.pathname);
+            editor.onKeyUp(function(e) {
+                const text = editor.getModel().getValue();
+                socket.send({room: location.pathname, message:text})
+            });
+            socket.on('message', (data) => {
+                editor.getModel().setValue(data);
+            });
+        });
 
     $(function (){
+        
         let url = window.location.href;
         let sub = url.replace('http://localhost:3000/showtweet/', '')
         let cid = parseInt(sub); 

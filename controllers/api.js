@@ -14,7 +14,6 @@ app.use(express.static('views'));
 require('./google-passport.js');
 var conn = require('../db')
 require('./routes')(app);
-
 // Auth middleware that checks if the user is logged in
 const isLoggedIn = (req, res, next) => {
     if (req.user) {
@@ -23,15 +22,14 @@ const isLoggedIn = (req, res, next) => {
         res.status(400).send("Unauthorized");
     }
 }
-
-
 module.exports = function(app){
     // GET ALL 
     app.get('/api/tweets', isLoggedIn, (req, res) => {
-        conn.query('select code_tweet.*, user.username, user.imageUrl from user inner join code_tweet on (code_tweet.uid = user.uid)', function(error, results, fields){
+        conn.query('select code_tweet.*, user.username, user.imageUrl from user inner join code_tweet on (code_tweet.uid = user.uid) order by STR_TO_DATE(date, "%d-%m-%Y") desc', function(error, results, fields){
             if (error) throw error;
             results[0].currentUserImg = req.user[0].imageUrl;
             results[0].currentUid = req.user[0].uid;
+            results[0].currentUser = req.user[0].username;
             res.send(results);
         });
     });
@@ -44,7 +42,8 @@ module.exports = function(app){
             if (!results.length){
                 res.status(400).send("Invalid id");
                 return;
-            }  
+            }
+            results[0].username = req.user[0].username;  
             res.send(results);
         });    
     });
@@ -57,7 +56,9 @@ module.exports = function(app){
             res.status(404).send(error.details[0].message);
             return;
         }
-        conn.query(`insert into code_tweet(code, uid, language, title) values(${conn.escape(req.body.code)}, ${conn.escape(req.user[0].uid)},${conn.escape(req.body.language)}, ${conn.escape(req.body.title)})`,function(error, results, fields){
+        let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        console.log(date);
+        conn.query(`insert into code_tweet(code, uid, language, title, date) values(${conn.escape(req.body.code)}, ${conn.escape(req.user[0].uid)},${conn.escape(req.body.language)}, ${conn.escape(req.body.title)}, '${conn.escape(date)}')`,function(error, results, fields){
             if (error) throw error;
             res.send(results);
         });
@@ -69,8 +70,9 @@ module.exports = function(app){
             res.status(404).send(error.details[0].message);
             return;
         }
-        cid = parseInt(req.params.cid);
-        conn.query(`update code_tweet set code=${conn.escape(req.body.code)}, language=${conn.escape(req.body.language)}, title=${conn.escape(req.body.title)} where cid=${cid}`, function(error, results, fields){
+        let cid = parseInt(req.params.cid);
+        let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        conn.query(`update code_tweet set code=${conn.escape(req.body.code)}, language=${conn.escape(req.body.language)}, title=${conn.escape(req.body.title)}, date=${conn.escape(date)} where cid=${cid}`, function(error, results, fields){
             if (error) throw error;
             if(results.affectedRows == 0) {
                 res.status(400).send("Invalid id");

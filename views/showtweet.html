@@ -12,7 +12,16 @@
 body{
   background-color: #f9f9f9;
 }
+cursor {
+  position: absolute;
+  background: black;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+}
 </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+
   <title id="pageTitle">TweetCode</title>
     </head>
     <body>
@@ -33,27 +42,30 @@ body{
  <div class="input-field col s12 m6">
 
     <select id="theme" name="theme">
-        <option value="vs">Visual Studio</option>
-        <option value="vs-dark">Visual Studio Dark</option>
-        <option value="hc-black">High Contrast Black</option>
+        <option value="my-vs">Visual Studio</option>
+        <option value="my-vs-dark">Visual Studio Dark</option>
+        <option value="my-hc-black">High Contrast Black</option>
     </select>
                 <label for="theme">Theme:</label>
        </div>
+              <div id="msg"></div>
        </div>
+
      <div id="code_editor"></div>
         <button type="submit" id="submit" class="btn btn-primary">Save</button>
     </form>
     </div>
+          <link rel="stylesheet" href="/remote-cursor.css">
+
     </body>
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
 
-
-
-<script type="text/javascript" src="/update.js"></script>
 <script src="https://unpkg.com/monaco-editor@latest/min/vs/loader.js"></script>
+<script type="text/javascript" src="/update.js"></script>
 <script>
      $(document).ready(function(){
     $('#language').formSelect();

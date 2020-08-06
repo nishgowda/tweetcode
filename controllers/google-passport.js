@@ -29,7 +29,7 @@ passport.serializeUser(function(user, done) {
      callbackURL: process.env.CALLBACK_URL
    },
    function(accessToken, refreshToken, profile, done) {
-    conn.query(`select * from user where email='${conn.escape(profile.emails[0].value)}'`, function(error, results){
+    conn.query(`select * from user where email=${conn.escape(profile.emails[0].value)}`, function(error, results){
          if (error) throw error;
          // if the user exists in database then grab their account
          if (results.length > 0){
@@ -39,9 +39,9 @@ passport.serializeUser(function(user, done) {
           // if the user is not in database, then we create an account, store their info
           // and grab their new account.
          }else{
-            conn.query(`insert into user(username, email, imageUrl) values('${conn.escape(profile.displayName)}', '${conn.escape(profile.emails[0].value)}', '${profile._json['picture']}')`, function(err, data, field){
+            conn.query(`insert into user(username, email, imageUrl) values(${conn.escape(profile.displayName)}, ${conn.escape(profile.emails[0].value)}, '${profile._json['picture']}')`, function(err, data, field){
                  if (err) throw err;
-                 conn.query(`select * from user where email='${conn.escape(profile.emails[0].value)}'`, function(e, r, f){
+                 conn.query(`select * from user where email=${conn.escape(profile.emails[0].value)}`, function(e, r, f){
                     if (e) throw e;
                     return done(null, r[0])
                  });
