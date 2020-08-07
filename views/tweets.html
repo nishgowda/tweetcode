@@ -33,12 +33,12 @@ body{
   </head>
 
   <body>
-  <div class="navbar-fixed">
+  <div class="navbar">
   <div class="row">
-    <nav style="background-color: #03D095">
+    <nav style="background-color: #1589FF">
       <div class="nav-wrapper bg-dark">
         <div class="col s12">
-          <a id="logo" href="/tweets" href="" class="brand-logo">TweetCode</a>
+          <a id="logo" href="/tweets" class="brand-logo">TweetCode</a>
           <a href="#" data-target="mobile-demo" class="sidenav-trigger">
             <i class="material-icons">menu</i>
           </a>
@@ -54,19 +54,14 @@ body{
 </div>
 <div class="container">
 
-            <div>
-                  
-                    <center>
-                      <h3>Public TweetCodes</h3>
-   <a id="newCodeTweet"  href="/create" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
-   </center>
+            <div>   
+    <h3>Public TweetCodes
+<a id="newCodeTweet"  href="/create" class="btn-floating btn-large waves-effect waves-light" style="background: #2B65EC"><i class="material-icons">add</i></a>
+</h3>
     </div>
-
-    <div id="divWrapper">
-<input type="search" id="filter" class="global-search" onkeyup="filter()" placeholder="Search">
-</div>
-
-
+        <div id="divWrapper">
+    <input type="search" id="filter" class="global-search" onkeyup="filter()" placeholder="Search">
+    </div>
     <div>
     <table id="codeTweets"class="highlight">
     <tr> 

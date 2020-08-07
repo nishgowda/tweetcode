@@ -35,7 +35,8 @@ $(document).ready(function(){
         };
         importScripts('https://unpkg.com/monaco-editor@latest/min/vs/base/worker/workerMain.js');
     `], { type: 'text/javascript' }));
-        let USER = {
+        
+    let USER = {
         label: '',
         color: "#" + Math.floor(Math.random()*16777215).toString(16)
     };
@@ -59,7 +60,6 @@ $(document).ready(function(){
             }
         });
      
-        
         monaco.editor.defineTheme('my-hc-black', {
             base: 'hc-black',
             inherit: true,
@@ -97,13 +97,12 @@ $(document).ready(function(){
                 $("#title").val(title);
                 $(document).prop('title', title)
                 monaco.editor.setModelLanguage(editor.getModel(), language);
-                console.log(`model language was changed to ${editor.getModel().getLanguageIdentifier().language}`);
                 editor.getModel().setValue(code);
-      
             },
             error: function(error){
                 if (error.responseText == 'Unauthorized'){
-                    window.location.href = error.responseText;
+                     window.location.href = "/tweets";
+                     alert(error.responseText)
                 }else{
                     alert(error);
                 }
@@ -147,7 +146,8 @@ $(document).ready(function(){
                     },
                     error: function(error){
                         if (error.responseText == "Unauthorized"){
-                            window.location.href = error.responseText;
+                            window.location.href = "/tweets";
+                            alert(error.responseText)
                         }else{
                             alert(error.responseText);
                         }

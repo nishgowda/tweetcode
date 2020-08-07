@@ -21,7 +21,8 @@ $(document).ready(function(){
                 window.location.replace("/tweets"); 
             },
             error: function(error){
-                alert(error.responseText);
+                alert(error.responseText)
+                window.location.href = "/tweets";
             }
         });
     })

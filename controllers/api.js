@@ -11,7 +11,7 @@ const Joi = require('joi');
 const app = express();
 app.use(express.json());
 app.use(express.static('views'));
-require('./google-passport.js');
+require('./auth-passport.js');
 var conn = require('../db')
 require('./routes')(app);
 // Auth middleware that checks if the user is logged in
@@ -58,7 +58,7 @@ module.exports = function(app){
         }
         let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
         console.log(date);
-        conn.query(`insert into code_tweet(code, uid, language, title, date) values(${conn.escape(req.body.code)}, ${conn.escape(req.user[0].uid)},${conn.escape(req.body.language)}, ${conn.escape(req.body.title)}, '${conn.escape(date)}')`,function(error, results, fields){
+        conn.query(`insert into code_tweet(code, uid, language, title, date) values(${conn.escape(req.body.code)}, ${conn.escape(req.user[0].uid)},${conn.escape(req.body.language)}, ${conn.escape(req.body.title)}, ${conn.escape(date)})`,function(error, results, fields){
             if (error) throw error;
             res.send(results);
         });
@@ -87,14 +87,26 @@ module.exports = function(app){
     // DELETE ONE
     app.delete('/api/tweets/:cid', isLoggedIn, (req, res) =>{
         cid = parseInt(req.params.cid);
-        conn.query(`delete from code_tweet where cid=${conn.escape(cid)}`, function(error, results, fields){
-            if (error) throw error;
-            if(results.affectedRows == 0) {
+        conn.query(`select * from code_tweet where cid=${conn.escape(cid)}`, function(e ,r, f){
+            if (e) throw e;
+            if(r.affectedRows == 0) {
                 res.status(400).send("Invalid id");
                 return;
             }
-            res.send(results);
-        })
+            if (r[0].uid == req.user[0].uid){
+                conn.query(`delete from code_tweet where cid=${conn.escape(cid)}`, function(error, results, fields){
+                    if (error) throw error;
+                    if(results.affectedRows == 0) {
+                        res.status(400).send("Invalid id");
+                        return;
+                    }
+                    res.send(results);
+                });
+            }else{
+                res.status(400).send("Unauthorized");
+                return;
+            }
+        });
     })
 }
 // POST and PUT schema that must be met, else we alert the user of the error and prevent

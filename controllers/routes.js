@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(express.static('views'));
 const passport = require('passport');
 const cookieSession = require('cookie-session')
-require('./google-passport.js');
+require('./auth-passport.js');
 
 module.exports = function(app){
     app.use(cookieSession({
@@ -38,6 +38,14 @@ module.exports = function(app){
         res.redirect('/tweets');
     }
     );
+    app.get('/auth/github/', passport.authenticate('github', { scope: ['user:email'] }));
+    app.get('/auth/github/callback', passport.authenticate('github', { failureMessage: 'Failed to log in' }),
+    function(req, res) {
+        // Successful authentication, redirect home.
+        res.redirect('/tweets');
+    }
+    );
+    
     app.get('/showtweet/:cid', (req, res) =>{
         res.sendFile('showtweet.html', {root:"views/"})
     })

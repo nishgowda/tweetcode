@@ -28,7 +28,8 @@ $(document).ready(function(){
             navbar.append('<li><a>' + `<img class="userAvatar" src="${result[0].currentUserImg}"` + '</a></li>');
         },
         error: function(error){
-            window.location.href = error.responseText;
+            window.location.href = "/";
+            alert(error.responseText)
         }
     });
     // Selector for the language options
@@ -44,7 +45,6 @@ $(document).ready(function(){
     }
    
     $(function(){
-
         // Setup to display the Monaco Editor
         require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@latest/min/vs' }});
         window.MonacoEnvironment = { getWorkerUrl: () => proxy };
@@ -94,11 +94,12 @@ $(document).ready(function(){
                 contentType: 'application/json',
                 dataType: "json",
                 success: function(data){
-                    window.location.replace("/tweets"); 
+                    window.location.href = `/showtweet/${data.insertId}`;
                 },
                 error: function(error){
                     if (error.responseText == "Unauthorized"){
-                        window.location.href = error.responseText;
+                        window.location.href = "/tweets";
+                        alert(error.responseText)
                     }else{
                         alert(error.responseText);
                     }
